@@ -1,19 +1,24 @@
 import { foods } from "./food";
+import Heading from "./shared/Heading";
 
 export default function Menu() {
   return (
     <div className="flex flex-wrap">
       {foods.map((food) => {
         return (
-          <div className="basis-1/4 p-5 grow text-center m-5 shadow-lg bg-indigo-100 max-w-sm rounded">
-            <h2 className="p-4 font-bold underline"> {food.name}</h2>
+          <div className="basis-1/5 p-5 w-full flex-auto text-center m-4 shadow-lg bg-indigo-100 rounded">
+            <div className="font-bold">
+              <Heading children={food.name} level={2} />
+            </div>
             <img
-              className="h-52"
+              className="h-72 w-full object-cover"
               src={"./images/" + food.image}
               alt={food.name}
             />
             <p>{food.description}</p>
-            <p className="font-bold">${food.price}</p>
+            <p className="font-bold bg-indigo-200 align-bottom">
+              ${food.price}
+            </p>
           </div>
         );
       })}
