@@ -3,11 +3,20 @@ type HeadingProps = {
   level: 1 | 2 | 3 | 4 | 5 | 6;
 };
 
+const sizeMap = {
+  1: "text-4xl",
+  2: "text-3xl",
+  3: "text-2xl",
+  4: "text-xl",
+  5: "text-lg",
+  6: "text-base",
+};
+
 export default function Input(props: HeadingProps) {
   const Tag = `h${props.level}` as keyof JSX.IntrinsicElements;
   return (
     <>
-      <Tag className="block text-xl">{props.children}</Tag>
+      <Tag className={`${sizeMap[props.level]}`}>{props.children}</Tag>
     </>
   );
 }
