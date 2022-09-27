@@ -22,7 +22,7 @@ export default function Checkbox({
         className="border border-gray-600 p-2"
         type={"checkbox"}
       />
-      <label className="block" htmlFor={id}>
+      <label className="m-3" htmlFor={id}>
         {label}
       </label>
     </div>
