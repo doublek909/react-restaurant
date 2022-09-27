@@ -1,9 +1,7 @@
-import Checkbox from "./shared/Checkbox";
-
 type CheckboxListProps = {
+  label: string;
   className?: string;
   children: React.ReactNode;
-  label: string;
 };
 
 export default function CheckboxList({

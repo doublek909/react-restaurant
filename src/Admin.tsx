@@ -2,7 +2,7 @@ import Input from "./shared/Input";
 import Heading from "./shared/Heading";
 import Button from "./shared/Button";
 import Checkbox from "./shared/Checkbox";
-import CheckboxList from "./CheckboxList";
+import CheckboxList from "./shared/CheckboxList";
 import { Food, foodTags } from "./food";
 import React, { useState } from "react";
 
@@ -41,11 +41,38 @@ export default function Admin() {
           className="m-4"
           onChange={handleInputChange}
         />
-        <Input id="price" label="Price" type="number" className="m-4" />
-        <Input id="image" label="Image filename" className="m-4" />
+        <Input
+          id="price"
+          label="Price"
+          type="number"
+          className="m-4"
+          onChange={handleInputChange}
+          value={food.price.toString()}
+        />
+        <Input
+          id="image"
+          label="Image filename"
+          className="m-4"
+          onChange={handleInputChange}
+          value={food.image}
+        />
         <CheckboxList label="Tags">
           {foodTags.map((tag) => (
-            <Checkbox key={tag} id={tag} label={tag} />
+            <Checkbox
+              key={tag}
+              id={tag}
+              label={tag}
+              checked={food.tags.includes(tag)}
+              onChange={(event) => {
+                setFood((curFood) => {
+                  const { checked } = event.target;
+                  const tags = checked
+                    ? [...curFood.tags, tag]
+                    : curFood.tags.filter((t) => t !== tag);
+                  return { ...curFood, tags };
+                });
+              }}
+            />
           ))}
         </CheckboxList>
         <Button className="block mt-4 mb-4" type="submit" variant="primary">
