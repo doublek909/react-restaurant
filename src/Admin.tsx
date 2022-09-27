@@ -12,7 +12,7 @@ export default function Admin() {
       <form>
         <Input id="name" label="Name" className="m-4" />
         <Input id="description" label="Description" className="m-4" />
-        <Input id="Price" label="Price" type="number" className="m-4" />
+        <Input id="price" label="Price" type="number" className="m-4" />
         <Input id="image" label="Image filename" className="m-4" />
         <CheckboxList label="Tags">
           {foodTags.map((tag) => (
