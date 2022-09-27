@@ -1,29 +1,30 @@
-type InputProps = {
+type CheckboxProps = {
   className?: string;
   id: string;
   label: string;
-  type?: "text" | "number" | "email" | "password" | "tel" | "checkbox";
   value?: string;
+  checked?: boolean;
 };
 
-export default function Input({
+export default function Checkbox({
   className,
   id,
   label,
-  type = "text",
   value,
-}: InputProps) {
+  checked,
+}: CheckboxProps) {
   return (
     <div className={className}>
-      <label className="block" htmlFor={id}>
-        {label}
-      </label>
       <input
+        checked={checked}
         value={value}
         id={id}
         className="border border-gray-600 p-2"
-        type={type}
+        type={"checkbox"}
       />
+      <label className="block" htmlFor={id}>
+        {label}
+      </label>
     </div>
   );
 }
