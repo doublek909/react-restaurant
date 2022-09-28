@@ -17,3 +17,16 @@ export async function addFood(food: NewFood): Promise<Food> {
   });
   return resp.json();
 }
+
+export async function searchFoods(search: string): Promise<Food[]> {
+  const searchUrl = url + "?=" + new URLSearchParams({ q: search }).toString();
+  const resp = await fetch(searchUrl);
+  return resp.json();
+}
+
+export async function deleteFood(id: number): Promise<void> {
+  const resp = await fetch(url + "/" + id, {
+    method: "DELETE",
+  });
+  return resp.json();
+}
