@@ -1,7 +1,18 @@
-import { foods } from "./food";
+import { useState, useEffect } from "react";
+import { Food } from "./food";
+import { getFoods } from "./services/foodsApi";
 import Heading from "./shared/Heading";
 
 export default function Menu() {
+  const [foods, setFoods] = useState<Food[]>([]);
+
+  useEffect(() => {
+    async function fetchFoods() {
+      setFoods(await getFoods());
+    }
+    fetchFoods();
+  }, []);
+
   return (
     <div className="flex flex-wrap">
       {foods.map((food) => {

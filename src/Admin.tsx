@@ -1,62 +1,144 @@
-import Input from "./shared/Input";
-import Heading from "./shared/Heading";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { foodTags, NewFood } from "./food";
+import { addFood } from "./services/foodsApi";
 import Button from "./shared/Button";
 import Checkbox from "./shared/Checkbox";
 import CheckboxList from "./shared/CheckboxList";
-import { Food, foodTags } from "./food";
-import React, { useState } from "react";
+import Heading from "./shared/Heading";
+import Input from "./shared/Input";
 
-let emptyFood: Food = {
+const emptyFood: NewFood = {
   name: "",
-  description: "",
   image: "",
   price: 0,
+  description: "",
   tags: [],
 };
 
+export type Errors = {
+  name?: string;
+  image?: string;
+  price?: string;
+  description?: string;
+  tags?: string;
+};
+
+export type Touched = {
+  name?: boolean;
+  image?: boolean;
+  price?: boolean;
+  description?: boolean;
+  tags?: boolean;
+};
+
+type FormStatus = "idle" | "submitting" | "submitted" | "error";
+
 export default function Admin() {
   const [food, setFood] = useState(emptyFood);
+  const [touched, setTouched] = useState<Touched>({});
+  const [status, setStatus] = useState<FormStatus>("idle");
+
+  const errors = validate();
+  const isValid = Object.keys(errors).length === 0;
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const { id, value } = event.target;
+    // React injects the current state value when a function is passed to setState
+    setFood((currentFood) => ({ ...currentFood, [id]: value }));
+  }
 
-    //React injects the current state value when a function is passed to setState
-    setFood((curFood) => ({ ...curFood, [id]: value }));
+  function handleBlur(event: React.FocusEvent<HTMLInputElement>) {
+    const { id } = event.target;
+    setTouched((currentTouched) => ({ ...currentTouched, [id]: true }));
+  }
+
+  function getError(id: keyof Errors) {
+    return status === "submitted" || touched[id] ? errors[id] : "";
+  }
+
+  function validate() {
+    const newErrors: Errors = {};
+    if (!food.name) {
+      newErrors.name = "Name is required";
+    }
+    if (!food.image) {
+      newErrors.image = "Image is required";
+    }
+    if (!food.price) {
+      newErrors.price = "Price is required";
+    }
+    if (!food.description) {
+      newErrors.description = "Description is required";
+    }
+    if (food.tags.length === 0 && status === "submitted") {
+      newErrors.tags = "At least one tag is required";
+    }
+    return newErrors;
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    window.scrollTo(0, 0);
+    setStatus("submitting");
+    if (!isValid) {
+      setStatus("submitted");
+      return;
+    }
+    await addFood(food);
+    toast.success("Food added! 🍔");
+    setStatus("idle");
+    setFood(emptyFood);
+    setTouched({});
   }
 
   return (
     <>
-      <Heading children="Admin" level={2} />
-      <form>
+      <Heading level={2}>Admin</Heading>
+
+      <form onSubmit={handleSubmit}>
         <Input
           id="name"
           label="Name"
-          className="m-4"
+          className="my-4"
           onChange={handleInputChange}
+          onBlur={handleBlur}
           value={food.name}
+          // Exercise 7: Centralize this logic in a function above.
+          error={getError("name")}
         />
         <Input
           id="description"
           label="Description"
-          className="m-4"
+          className="my-4"
           onChange={handleInputChange}
+          onBlur={handleBlur}
+          value={food.description}
+          error={getError("name")}
         />
         <Input
           id="price"
           label="Price"
           type="number"
-          className="m-4"
+          className="my-4"
           onChange={handleInputChange}
+          onBlur={handleBlur}
           value={food.price.toString()}
+          error={errors.price}
         />
         <Input
           id="image"
           label="Image filename"
-          className="m-4"
+          className="my-4"
           onChange={handleInputChange}
+          onBlur={handleBlur}
           value={food.image}
+          error={errors.image}
         />
-        <CheckboxList label="Tags">
+        <CheckboxList
+          label="Tags"
+          error={status === "submitted" ? errors.tags : undefined}
+        >
           {foodTags.map((tag) => (
             <Checkbox
               key={tag}
@@ -64,19 +146,19 @@ export default function Admin() {
               label={tag}
               checked={food.tags.includes(tag)}
               onChange={(event) => {
-                setFood((curFood) => {
+                setFood((currentFood) => {
                   const { checked } = event.target;
                   const tags = checked
-                    ? [...curFood.tags, tag]
-                    : curFood.tags.filter((t) => t !== tag);
-                  return { ...curFood, tags };
+                    ? [...currentFood.tags, tag]
+                    : currentFood.tags.filter((t) => t !== tag);
+                  return { ...currentFood, tags };
                 });
               }}
             />
           ))}
         </CheckboxList>
-        <Button className="block mt-4 mb-4" type="submit" variant="primary">
-          Submit
+        <Button className="block mt-4" variant="primary" type="submit">
+          Save
         </Button>
       </form>
     </>
